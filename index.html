@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부서별 수익증대 실행계획</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--ink:#1c2430;--sub:#5b6676;--line:#dde2ea;--brand:#1f4fd8;--brand-soft:#e8eefc;
+  --s1:#1f6feb;--s1b:#e6f0ff;--s2:#1a8f5a;--s2b:#e3f6ec;--s3:#c47a00;--s3b:#fff1d6;--ok:#13795b;--bad:#b42318;--warn:#fff8e1;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161c;--card:#1b212b;--ink:#e8ecf2;--sub:#9aa5b5;--line:#2d3644;--brand:#6c93ff;--brand-soft:#223056;
+  --s1:#6aa6ff;--s1b:#1c2a44;--s2:#4fd18b;--s2b:#17342a;--s3:#f0b44c;--s3b:#3a2e12;--ok:#4fd18b;--bad:#ff8a80;--warn:#3a3214;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+header.top h1{font-size:17px;margin:0;flex:1 1 260px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 11px;cursor:pointer}
+button:hover{border-color:var(--brand)}
+button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.layout{display:grid;grid-template-columns:200px 1fr;gap:20px;max-width:1280px;margin:0 auto;padding:18px 16px 80px}
+nav.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:13px}
+nav.side a{display:block;padding:4px 8px;color:var(--sub);text-decoration:none;border-radius:6px}
+nav.side a:hover{background:var(--brand-soft);color:var(--brand)}
+nav.side .grp{margin:10px 8px 2px;font-size:11px;color:var(--sub);letter-spacing:.04em}
+section{margin-bottom:34px;scroll-margin-top:70px}
+h2{font-size:20px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.kpi .v{font-size:26px;font-weight:700;line-height:1.2}
+.kpi .l{font-size:12px;color:var(--sub)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.stage{border-left:5px solid var(--c);background:var(--cb)}
+.stage h3{margin:0 0 4px;font-size:16px;color:var(--c)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:var(--brand-soft);font-size:12.5px;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tfoot td{font-weight:700;background:var(--brand-soft)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.dept{margin-bottom:16px}
+.dept header{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:8px}
+.dept h3{margin:0;font-size:18px}
+.tag{font-size:11.5px;background:var(--brand-soft);color:var(--brand);border-radius:99px;padding:1px 9px}
+.eff{margin-left:auto;font-size:13px;color:var(--sub)}
+.eff b{color:var(--ink)}
+.box{border-radius:8px;padding:8px 12px;margin:8px 0;font-size:14px}
+.basis{background:var(--warn)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.col{border-top:4px solid var(--c);background:var(--cb);border-radius:8px;padding:8px 12px}
+.col h4{margin:0 0 4px;font-size:13px;color:var(--c)}
+.col ul{margin:0;padding-left:18px}
+.col li{margin:3px 0;position:relative}
+.kpi-line{font-size:13.5px;color:var(--sub);margin-top:8px}
+.del{border:none;background:none;color:var(--bad);padding:0 4px;font-size:15px;opacity:.5}
+.del:hover{opacity:1}
+.add{font-size:12px;margin-top:4px;color:var(--sub)}
+.note li{margin:4px 0}
+[contenteditable="true"]{outline:none;border-radius:4px;transition:background .15s}
+body.editing [contenteditable="true"]:hover{background:rgba(31,79,216,.07)}
+body.editing [contenteditable="true"]:focus{background:rgba(31,79,216,.13);box-shadow:0 0 0 2px var(--brand)}
+body:not(.editing) .del,body:not(.editing) .add{display:none}
+@media (max-width:820px){.layout{grid-template-columns:1fr}nav.side{display:none}}
+@media print{header.top,nav.side{display:none}.layout{display:block;padding:0}.card,.tw{break-inside:avoid}body{background:#fff}}
+</style>
+</head>
+<body class="editing">
+<header class="top">
+  <h1>부서별 수익증대 실행계획 · 2026 건강보험 수가 구조혁신 대응</h1>
+  <div class="tools">
+    <button id="btnLock">편집 잠금</button>
+    <button class="primary" id="btnSave">수정본 HTML 저장</button>
+    <button id="btnPrint">인쇄/PDF</button>
+    <button id="btnReset">원본으로 초기화</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="side" id="nav"></nav>
+  <main id="app" data-ts="0"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+var LS_KEY="hosp-revenue-plan-v1";
+var app=document.getElementById("app");
+
+/* ===== 원본 데이터 (금액 단위: 백만원/연, 가정치 - 병원 실데이터로 교체) ===== */
+var POLICY=[
+ ["진찰료 2% 인상","20년 만의 진찰료 상향. 초·재진 진찰료 2% 인상으로 외래 전 건에 적용 (필수 기본진료 강화, 연 1.5조원 투자 항목)."],
+ ["종합병원 심층진찰 시범사업 신설","상급종합 심층진찰(15분 이상, 초진 진찰료 85,720원, 연 4회→6회)과 유사한 형태로 종합병원에 도입 예정. 진단이 모호한 중증·복합 질환자 대상."],
+ ["간호간병 통합병동 성과보상","간호인력 배치 준수, 중증환자 수용 비율, 낙상 등 안전관리, 환자만족도를 평가해 우수 병동에 총 진료비의 5%를 건강보험공단이 추가 지급. 세부 기준은 추후 공지."],
+ ["입원료·중환자실 보상 강화","중환자실 기본점수·기준등급점수 10% 인상, 간호인력 배치가 높을수록 보상 강화. 격리실 15%, 감염병 환자 중환자 관리료 40% 인상 추진."],
+ ["중증·응급 최종치료 보상 확대","1,600여 개 중증 수술·시술·마취 보상 확대, 야간·응급·휴일 가산(상대가치 20%↑, 가산 50%↑), 응급실 내 의료행위 인정 50%→100% (연 9천억원)."],
+ ["검사 과보상 조정 (손실 방어 필요)","원가 보상률 190%→150%→110% 단계 조정(연 2.6조원 절감). CT·MRI 우선 인하, 일반 영상검사로 확대 예정. 위탁검사관리료 10% 폐지, 위탁의뢰료 25% 고정 + 조건부 5~10%(병리 10%+5%)."],
+ ["본원 제외 항목","비수도권·수도권 취약지 우대, 소아·분만, 중증·응급 수술의 지역 가산 일부는 본원 해당 없음 (원본 보고서 기준)."],
+ ["본원 해당 항목","진찰료 인상·심층진찰, 일반병동·중환자실 보상 강화, 간호간병 통합병동 성과보상, CT·MRI·검체검사 수가 조정, 응급실 내원(K-TAS 1~3등급) 후 24시간 이내 수술."]
+];
+var STAGES=[
+ ["1단계 · 누락 차단과 기반 구축","0~3개월","이미 확정·시행 중인 수가에서 새는 수익을 막고, 수가 고시 확정 즉시 청구할 수 있도록 EMR·프로세스를 준비합니다.","--c:var(--s1);--cb:var(--s1b)"],
+ ["2단계 · 신규 수익원 확장","3~9개월","심층진찰, 원내 검사 전환, 비급여·선별급여, 성과보상 등 새 수익 항목을 부서 단위 프로세스로 정착시킵니다.","--c:var(--s2);--cb:var(--s2b)"],
+ ["3단계 · 성과보상 고도화","9~18개월","병동 성과보상, 의료질·적정성 평가 등급, 조건부 보상 요건을 지표 중심으로 관리해 가산을 구조적으로 확보합니다.","--c:var(--s3);--cb:var(--s3b)"]
+];
+var D=[
+{id:"won",name:"원무과",tag:"외래·접수",A:100,e:[120,130,110],
+ basis:"진찰료 2% 인상 / 종합병원 심층진찰 시범사업 신설 (15분 이상, 연 6회 확대 방향)",
+ s:[["진찰료 인상분이 EMR 수가코드·청구 프로그램에 반영됐는지 월 1회 검증","심층진찰 후보 선별 기준표(진단 모호, 중증·복합, 장기 진료 필요) 작성","진료협력센터·예약센터 예약상담 스크립트에 심층진찰 안내 포함"],
+    ["심층진찰 진료시간표(진료과·진료의·요일·대상질환) 개설 및 홈페이지·원내 안내","심층진찰 동의서 서식과 15분 이상 진료시간 기록 요건 표준화","접수 단계에서 예약 → 동의서 → 진료 → 후속관리 일원화 동선 구축"],
+    ["후속관리(외래 지속·입원·회송·종결) 전환율 추적","심층진찰 전용 진료과 신설 여부를 실적 기반으로 결정","심층진찰 건수·입원 전환율 월간 대시보드 경영진 보고"]],
+ kpi:"심층진찰 월 건수 / 입원 전환율 / 동의서 완비율 / 진찰료 청구 오류 0건"},
+{id:"nur",name:"간호부",tag:"병동·중환자실",A:200,e:[250,300,250],
+ basis:"간호간병 통합병동 성과보상(총 진료비 5%) / 중환자실 기본점수·기준등급점수 10%↑ / 간호차등제 개편",
+ s:[["병동별 환자수 대비 간호사 비율로 현재 등급(일반병동 기준 1등급, 중환자실 기준 2등급) 산출","성과지표 4종(인력배치, 중증환자 수용, 낙상 등 안전, 환자만족도) 병동별 기준선 측정","등급 경계 구간에 있는 병동 선별"],
+    ["등급 1단계 상승에 필요한 추가 인력의 비용 대비 수익(손익분기) 산정 (총무과 협업)","중증환자 수용 비율을 높이는 입원 배정·전동 기준 조정","낙상·욕창·투약 질지표 병동 라운딩 (QPS 협업)"],
+    ["성과 평가 기준 공지 시 병동별 목표 확정 및 월간 관리","우수 병동 사례 전파, 환자만족도 개선 활동","통합병동 확대 또는 일반병동 등급 상향 로드맵 수립"]],
+ kpi:"병동별 간호등급 / 낙상률 / 환자만족도 / 성과지원금 수령액(해당 병동 총 진료비 5%)"},
+{id:"img",name:"영상의학과",tag:"CT·MRI",A:150,e:[150,180,150],
+ basis:"CT·MRI 과보상 분류, 원가보상률 200%→150%→110% / 비급여·선별급여 확대, 정형외과 환자 CT·MRI 활성화, AI 활용, 프리미엄 검진 (원본 보고서)",
+ s:[["부위별·조영별 건당 수익을 수가 인하율 가정(예: 부위별 -10~-25%)별로 시뮬레이션해 손실 규모 확정","장비 가동률과 회전시간(turnover) 실측 (건진센터 제안 반영)","불필요한 재촬영·중복 처방 점검으로 삭감 예방 (보험심사 협업)"],
+    ["정형외과 환자 MRI·CT 패스트트랙(외래 당일 예약·판독) 운영","선별급여·비급여 신규 검사 항목 발굴과 가격 공지","프리미엄 검진 CT·MRI 패키지, 야간·주말 슬롯 확대로 가동률 상승"],
+    ["AI 판독 보조 도입으로 판독 시간 단축 → 검사 회전율 개선","인하 수가 확정 후 건당 수익 재산정, 건수 목표 재설정","일반 영상검사까지 확대되는 시점 대비 조정안 준비"]],
+ kpi:"장비 가동률 / 일평균 검사 건수 / 건당 판독 소요시간 / 비급여·선별급여 매출"},
+{id:"lab",name:"진단검사의학과",tag:"검체·위탁",A:80,e:[90,100,80],
+ basis:"위탁검사관리료 10% 폐지, 위탁의뢰료 25% 고정 + 조건부 5~10% / 원내 전환 후보: Cortisol, Insulin, C-Peptide, HAVAb IgG 등",
+ s:[["위탁검사 건수·금액 상위 목록 분석","원내 전환 후보 검사의 시약·장비·인력 포함 손익분기 계산 (구매과 협업)","수술 전 검사·응급실 필요 비급여 항목 후보 발굴"],
+    ["Cortisol, Insulin, C-Peptide, HAVAb IgG 우선 원내 도입","위탁·수탁 업체 재계약과 경쟁입찰로 단가 재협상","응급·수술 전 검사 세트(패키지) 구성"],
+    ["조건부 보상(5~10%) 세부 요건 확정 시 충족 체계 구축","원내 검사 수탁(지역 의원 대상) 확대 검토","인하 수가 반영한 검사별 수익성 분기 점검"]],
+ kpi:"원내 전환 검사 수 / 위탁비용 절감액 / 검사 TAT / 조건부 보상 충족률"},
+{id:"ins",name:"보험심사팀",tag:"청구·삭감",A:150,e:[200,200,150],
+ basis:"야간·응급·휴일 가산(상대가치 20%↑, 가산 50%↑) / 응급실 의료행위 50→100% / K-TAS 1~3등급 응급실 내원 후 24시간 이내 수술 추가 산정 / 중환자실 3등급 1일 90,000원",
+ s:[["야간·응급·휴일 시간대 수술·마취 가산 누락 점검 규칙 적용","응급의료수가 [별표2] 행위(창상 봉합술, 도수정복술, Splint, Cast 등) 100% 산정 확인","24시간 이내 수술 추가 산정 월 전수 점검 (2026년 7월 11건 약 900만원, 연환산 약 1.1억원)"],
+    ["EMR 알림: K-TAS 1~3등급 + 24시간 내 수술 시 추가 산정 플래그","중환자실 3등급 일 단위 자동 집계 (7월 352일 31,680,000원, 연환산 약 3.8억원)","삭감 사전 점검 규칙 강화: 검체·영상 불필요 처방"],
+    ["1,600여 개 중증 수술·시술·마취 중 본원 시행 빈도 상위 항목 파악","고시 확정 후 수술 스케줄·당직 체계와 연동 가산 극대화","월간 삭감·누락 환류 보고 정례화"]],
+ kpi:"가산 누락 건수 / 추가 산정 월 금액 / 삭감률 / 응급실 행위료 산정률"},
+{id:"reh",name:"재활치료팀",tag:"급성기·회복기",A:100,e:[120,130,100],
+ basis:"급성기·회복기 재활 수가 개편, 중환자실 조기재활 묶음수가(전문의·전담인력·팀 접근 요건) / 관절 수술·신경근육질환 운동치료, 복합림프물리치료 / 비급여 개발(페인 스크램블러, 전정 치료)",
+ s:[["인력·시설 기준 충족 여부 갭 분석","관절 수술 입원환자 재활 처방 표준화 (정형외과 협업)","수가 상향 항목(운동치료·복합림프물리치료) 실시 현황 점검"],
+    ["페인 스크램블러, 전정 치료 등 비급여 상품 구성과 가격 공지","신경근육질환 입원환자 운동치료 적극 시행","환자 안내문과 상담 동선 정비"],
+    ["중환자실 조기재활 팀 구성 (재활의학과 전문의·전담 인력)","회복기 환자의 병동·외래 재활 연계 경로 구축","재활 성과지표 기반 홍보 연계"]],
+ kpi:"치료 건수 / 전문재활치료 산정 건수 / 비급여 매출 / 조기재활 개시일"},
+{id:"pha",name:"약제과",tag:"약품·재고",A:40,e:[50,50,40],
+ basis:"필수의약품 신속 공급체계, 고위험·필수의약품 재고 최적화, 재고 손실 최소화 (원본 보고서)",
+ s:[["폐기·유효기간 임박 재고 현황 집계","응급실·수술실 필수약품 재고 연계표 정비","청구 가능하나 미청구된 약제 항목 점검"],
+    ["ABC·VEN 분석으로 안전재고 기준 재설정","도매·제약사 협상과 공동구매로 약가 절감","수급 불안정 의약품 비상 조달 체계 구축"],
+    ["폐기율 월간 목표 관리","고위험·고가 약품 적정 사용 모니터링","약품비 절감분의 수익 환산 보고"]],
+ kpi:"폐기액 / 재고 회전율 / 약품비 절감액 / 필수약품 결품 0건"},
+{id:"hpc",name:"건진센터",tag:"검진",A:60,e:[70,80,70],
+ basis:"건강검진은 급여·비급여 모두 수가 통제 대상 아님 / 2027 종합검진 패키지 조정 예정 / 초·재진료 인상 → 유소견 진료연계 / EMR 조직검사 의뢰 연 1,437건(2025)",
+ s:[["유소견자 외래 진료 연계 절차 표준화 (검진 당일 예약)","CT·MRI 예약·검사시간 관리로 회전시간 단축","병리·검체 수탁업체 현 계약 조건 점검"],
+    ["2027 종합검진 패키지: 프리미엄 CT·MRI 구성과 가동 슬롯 연계","검체 수탁업체 재계약, 경쟁입찰·다기관 거래 검토","검진 후 재검·정밀검사 안내 자동화"],
+    ["유소견 → 외래·정밀검사 전환율 KPI 관리","저보상 수가 인상 항목(자궁경부암 진단 시술, 질강처치) 심평원 고시 후 적용","기업·단체 검진 영업 확대"]],
+ kpi:"유소견 연계율 / 패키지 객단가 / CT·MRI 가동률 / 재검 전환율"},
+{id:"hd",name:"인공신장실",tag:"투석",A:50,e:[60,60,50],
+ basis:"치료량 중심에서 질·성과 중심 평가로 전환 / 혈류 감염 예방, 혈관 접근로 관리, 적정 투석·빈혈·영양·감염률 지표",
+ s:[["적정 투석, 빈혈, 영양, 감염률 등 질 지표 월간 기준선 측정","혈관 접근로 관리 기록 정비","투석 청구 가산·관리료 누락 점검"],
+    ["지표 미달 환자 개입 프로토콜(영양·복약 교육, 낙상 예방)","베드 가동률과 시간대 배치 최적화","지역 의원·요양병원 투석 의뢰·회송 협약"],
+    ["적정성평가 등급 향상 목표 설정과 관리","고령·만성질환 통합관리(다학제) 운영","혈관 접근로 시술 연계 외래 경로 구축"]],
+ kpi:"적정 투석률 / 혈류감염률 / 베드 가동률 / 신규 환자 수"},
+{id:"fac",name:"시설과",tag:"시설·에너지",A:30,e:[35,35,30],
+ basis:"필수의료 시설 인프라 강화, 설비 안정성, 에너지 관리(태양광 도입, 에너지 절감)",
+ s:[["응급실·중환자실·수술실 설비(전기, 의료가스, UPS, 비상발전기, 냉난방) 점검표 일제 점검","에너지 사용량 기준선 측정","시설 고장으로 인한 진료 중단·가동 손실 사례 집계"],
+    ["태양광 설비 도입 타당성과 투자 회수 기간 분석","에너지 절감 실천 운동 + 설비 효율 개선","수술방·중환자실 가동 중단을 줄이는 예방보수 일정"],
+    ["시설 투자 우선순위를 필수의료 중심으로 재편","에너지 절감액의 수익 환산 보고","수익 창출 공간(비급여 상담·검진 공간) 재배치 검토"]],
+ kpi:"진료 중단 0건 / 에너지 비용 절감액 / 예방점검 이행률"},
+{id:"pur",name:"구매과",tag:"재료·위수탁",A:40,e:[50,50,40],
+ basis:"필수의료 지원 품목 관리, 위·수탁 검사의 원내 전환, 수가 조정 항목의 재료비 변화·수익성 분석",
+ s:[["수가 인상·인하 항목과 재료비를 매칭해 항목별 마진 분석","원내 전환 검사(4종) 시약·장비 견적 확보","응급·중환자·수술 필수재료 재고 기준 설정"],
+    ["시약·소모품 통합구매와 약정 단가 재협상","위탁 업체 경쟁입찰 운영 (진단검사의학과 협업)","고가 재료 사용 대비 수가 보상 점검"],
+    ["재료비 대비 수익성 분기 보고","필수의료 품목 공급 안정성 평가","구매 절감액의 수익 환산 관리"]],
+ kpi:"구매 절감액 / 재료비율 / 필수재료 결품 0건"},
+{id:"qps",name:"QPS팀",tag:"인증·평가",A:120,e:[150,150,120],
+ basis:"수가 보호 전략: 인증 유지 → 적정성평가 → 의료질평가 → 환자안전 → 경영성과 연결 / 인증자격 2026.3.12~2030.3.11 / 감염관리료 1등급 기반 유지",
+ s:[["수가·지원금 항목-지표-담당자 지정표 운영, 항목별 회수 가능액 월간 점검","인증 기준 이행점검과 자체평가 정례화","정책수가 변경 모니터링과 경영진 보고 체계"],
+    ["적정성평가 결과 분석 → 부서별 개선과제 도출, 등급 상향 효과 금액 환산","통합간호간병 질지표(환자확인, 낙상, 욕창, 투약안전) 관리","환자경험평가 개선과제 발굴"],
+    ["의료질평가 지표 관리로 지원금 극대화","성과보상(간호간병 5%)과 질지표 연동 관리","수가 고시 확정별 영향 보고 분기화"]],
+ kpi:"적정성평가 등급 / 의료질평가 점수 / 질지표 달성률 / 지정표 항목 처리율"},
+{id:"ic",name:"감염관리실",tag:"감염예방관리료",A:80,e:[100,100,80],
+ basis:"감염예방관리료 1등급 유지, 지역 중소병원 맞춤형 기준 신설(최대 500억원 지원) / 격리실 15%·감염병 환자 중환자 관리료 40% 인상 / 중환자실 기본점수 10%↑",
+ s:[["감염예방관리료 1등급 인력·시설·활동 기준 점검","격리실 지정 현황과 산정 대상 확인","감염병 환자 중환자 관리료 40% 인상 대상 코드 점검"],
+    ["지역 중소병원 맞춤형 기준 발표 시 현행 1등급과 비교해 유리한 쪽 선택","격리치료 병실 운영 기준을 청구와 일치시킴","의료관련감염 감시 지표를 병동·중환자실 단위로 환류"],
+    ["감염관리 인력의 전문성·실적 관리","격리실 가동률과 청구 연계 월간 보고","환기·공기질 개선 설비 점검 (시설과 협업)"]],
+ kpi:"1등급 유지 여부 / 격리실 산정 건수 / 의료관련감염률"},
+{id:"trs",name:"수혈관리실",tag:"혈액",A:20,e:[25,25,20],
+ basis:"직접 연계 수가는 확인되지 않음 / 중증·응급·입원 진료 확대에 따라 적정수혈, 부작용, 혈액 반납·폐기 관리 중요성 증가",
+ s:[["혈액 반납·폐기 현황 월간 집계","수혈 적정성평가 지표 기준선 측정","수혈 처방 청구 누락 점검"],
+    ["병동 컨설팅과 직원 교육 시행","폐기 혈액 감소 프로토콜(반납 기준, 재고 조정)","수혈 부작용 보고 체계 정비"],
+    ["지표 월간 모니터링과 정책 변화 환류","응급·수술 필요 혈액 안전재고 기준 정립","환자안전 평가 연계 보고"]],
+ kpi:"혈액 폐기율 / 적정 수혈률 / 부작용 보고율"},
+{id:"nut",name:"영양팀",tag:"영양관리",A:25,e:[30,30,25],
+ basis:"직접 연계 수가는 없으나 영양관리료 산정 누락 방지, 치료식 질 관리 / 담당자 지정표의 영양상담 수가(청구 가능 미청구분)",
+ s:[["영양상담·영양관리료 산정 가능 대상 대비 청구 건수 차이(미청구액) 집계","영양사 인력 신고와 업무실적 기록 점검","치료식 처방과 급식 일치율 점검"],
+    ["입원·외래 영양상담 대상 자동 추출(영양불량 위험, 당뇨, 신장질환 등)","영양교육 교육안·상담 자료 표준화","투석·암 환자 영양 개입 프로토콜 (인공신장실 협업)"],
+    ["영양상담 청구 가능 건 100% 산정 목표 관리","성과지표와 연계한 영양 개입 효과 보고","영양 비급여 서비스(상담 프로그램) 검토"]],
+ kpi:"영양상담 미청구액 / 산정률 / 치료식 일치율"},
+{id:"cc",name:"콜센터",tag:"예약·상담",A:15,e:[20,20,15],
+ basis:"정책·진료체계 변경 모니터링, 상담 스크립트·매뉴얼, 상담원 교육, 문의 동향 환류",
+ s:[["심층진찰, 응급실 이용, 진찰료 변경 상담 스크립트 개정","문의 유형별 통계 구축","예약 이탈 사유 기록 시작"],
+    ["상담 → 예약 전환율 KPI 관리","검진·재활·심층진찰 상품 안내 교육","문의 동향을 월 1회 부서에 환류"],
+    ["야간·주말 응급·진료 안내 개선","예약 노쇼 감소 알림 체계 (전산과 협업)","환자경험 지표와 연동"]],
+ kpi:"예약 전환율 / 응대 품질 / 노쇼율"},
+{id:"it",name:"전산팀",tag:"EMR",A:30,e:[40,40,30],
+ basis:"수가 변동 시 신속 적용 지원",
+ s:[["수가 개편 항목별 EMR 코드·산정 로직 적용 일정표 작성","진찰료 2% 인상과 심층진찰 코드 적용 점검","추가 산정 누락 알림 요구사항 접수 (보험심사 협업)"],
+    ["K-TAS 1~3 + 24시간 수술 플래그, 야간·응급·휴일 가산 자동 판정 개발","중환자실 등급별 일 집계 자동화","병동 성과보상 지표 자동 집계 대시보드"],
+    ["수가·지원금 항목별 월간 회수 대시보드 (QPS 협업)","데이터 기반 삭감 예측","수가 고시 변경 체크 자동화"]],
+ kpi:"적용 소요일 / 자동 알림 건수 / 오류 0건"},
+{id:"fin",name:"재무과",tag:"회계·원가",A:20,e:[25,25,20],
+ basis:"기타 지원금 발생 시 의료수익과 구분해 별도 관리",
+ s:[["지원금·성과보상 계정을 의료수익과 분리","부서별 수가 영향 월간 손익표 작성","검사 수가 인하 영향 시뮬레이션"],
+    ["항목별 원가·마진 분석 (구매과 협업)","설비·인력 투자 의사결정 기준(회수기간) 표준화","수익 개선 효과 월간 추적"],
+    ["부서 성과 평가와 연동","지원금 수령 현황 공시 체계","연간 효과 검증과 다음 연도 계획 반영"]],
+ kpi:"월 영향액 / 지원금 구분 관리율 / 투자 회수기간"},
+{id:"hr",name:"총무과",tag:"인력",A:30,e:[40,40,30],
+ basis:"간호인력 신고, 주기별 자료 신고 지원 / 필수의료 인력 채용·배치 / 필수의료 직무교육",
+ s:[["간호인력 신고 데이터 정확성 점검 (등급 산정 직접 영향)","신고 주기 달력과 담당자 지정","필수의료 인력 결원 현황"],
+    ["등급 상승에 필요한 채용 우선순위 (간호부 손익 산정 연계)","필수의료 인력 채용·배치 신속화","환자안전·감염관리 직무교육 강화"],
+    ["인력 충원 효과(수가·성과보상) 추적","재활·영상 전문 인력 확보","이직률 관리"]],
+ kpi:"신고 정확도 / 충원 소요일 / 교육 이수율"},
+{id:"pr",name:"홍보팀",tag:"유입·인지",A:40,e:[50,50,40],
+ basis:"지역 종합병원의 진료·입원·수술·응급·재활 연계와 치료 완결성 중심 홍보 (원본 보고서)",
+ s:[["상급병원 치료 후 본원 전원 환자 사례·실적 콘텐츠","응급실 이용 안내 영상 제작","홈페이지에 심층진찰·재활·응급 안내 개편"],
+    ["진료→입원→수술→재활 치료과정 중심 콘텐츠로 전환","환자 인터뷰 영상","검진·재활 비급여 상품 홍보 연계"],
+    ["유입 경로별 성과 분석(검색·지역·전원)","지역 의원·요양병원 대상 협력 홍보","환자경험 콘텐츠 정례화"]],
+ kpi:"신환 수 / 전원 유입 수 / 응급 내원 수 / 콘텐츠 조회수"}
+];
+
+/* ===== 유틸 ===== */
+function h(t,a,c){var e=document.createElement(t);if(a)for(var k in a)e.setAttribute(k,a[k]);if(c!=null)e.innerHTML=c;return e}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function num(el){var v=parseFloat(String(el.textContent).replace(/[^\d.\-]/g,""));return isNaN(v)?0:v}
+function fmt(n){return Math.round(n).toLocaleString("ko-KR")}
+function liHtml(t){return '<li><span class="ed" contenteditable="true">'+esc(t)+'</span> <button class="del" data-act="del-li" title="삭제">×</button></li>'}
+
+/* ===== 렌더 ===== */
+function render(){
+  var html='';
+  html+='<section id="overview"><h2 class="ed" contenteditable="true">종합 효과 요약</h2>'+
+   '<p class="lead ed" contenteditable="true">원본 보고서(2026.08.07 건강보험 수가 구조혁신 방안 보고회)의 부서별 대응안을, 정책 근거에 맞춰 3단계 실행안으로 확장했습니다. 아래 금액은 가정치이므로 병원 실제 데이터로 바꾸면 모든 합계와 배수가 자동으로 다시 계산됩니다.</p>'+
+   '<div class="grid g4">'+
+   '<div class="card kpi"><div class="l">기존 보고안 효과 합계 (A)</div><div class="v" id="tA">-</div><div class="l">백만원/연</div></div>'+
+   '<div class="card kpi"><div class="l">확장 실행안 효과 합계 (B)</div><div class="v" id="tB">-</div><div class="l">백만원/연</div></div>'+
+   '<div class="card kpi"><div class="l">확장 배수 (B÷A)</div><div class="v" id="tM">-</div><div class="l" id="tJ"></div></div>'+
+   '<div class="card kpi"><div class="l">목표 배수</div><div class="v"><span class="num ed" id="goal" contenteditable="true">3.0</span>배</div><div class="l">숫자를 고쳐 보세요</div></div>'+
+   '</div></section>';
+  html+='<section id="policy"><h2>① 국가 정책 근거</h2><p class="lead ed" contenteditable="true">모든 부서 실행안은 아래 정책 항목에 근거합니다. 세부 기준·고시가 확정되기 전 항목은 확정 후 수정해 주세요.</p><div class="grid g3">';
+  POLICY.forEach(function(p){html+='<div class="card"><b class="ed" contenteditable="true">'+esc(p[0])+'</b><div class="ed" contenteditable="true" style="color:var(--sub);font-size:14px">'+esc(p[1])+'</div></div>'});
+  html+='</div></section>';
+  html+='<section id="roadmap"><h2>② 3단계 로드맵</h2><div class="grid g3">';
+  STAGES.forEach(function(s){html+='<div class="card stage" style="'+s[3]+'"><h3 class="ed" contenteditable="true">'+esc(s[0])+'</h3><div class="tag ed" contenteditable="true">'+esc(s[1])+'</div><p class="ed" contenteditable="true" style="margin:6px 0 0">'+esc(s[2])+'</p></div>'});
+  html+='</div></section>';
+  html+='<section id="sim"><h2>③ 부서별 효과 시뮬레이터 (백만원/연, 가정치)</h2><p class="lead ed" contenteditable="true">기존 안(A)과 단계별 추가 효과(1~3단계)를 직접 입력하세요. 배수가 목표 이상이면 초록색으로 표시됩니다.</p>'+
+   '<div class="tw"><table id="simT"><thead><tr><th>부서</th><th class="n">기존안 A</th><th class="n">1단계</th><th class="n">2단계</th><th class="n">3단계</th><th class="n">확장안 B</th><th class="n">배수</th><th></th></tr></thead><tbody>';
+  D.forEach(function(d){html+=simRow(d.id,d.name,d.A,d.e)});
+  html+='</tbody><tfoot><tr><td>합계</td><td class="n" id="fA"></td><td class="n" id="f1"></td><td class="n" id="f2"></td><td class="n" id="f3"></td><td class="n" id="fB"></td><td class="n" id="fM"></td><td></td></tr></tfoot></table></div>'+
+   '<div class="add"><button data-act="add-sim">+ 부서 행 추가</button></div></section>';
+  html+='<section id="depts"><h2>④ 부서별 단계별 실행방안</h2>';
+  D.forEach(function(d){html+=deptCard(d)});
+  html+='</section>';
+  html+='<section id="notes"><h2>⑤ 가정과 유의사항</h2><div class="card note"><ul class="ed" contenteditable="true">'+
+   '<li>금액은 모두 설명을 위한 가정치입니다. 병원의 최근 12개월 청구·검사·병동 실적으로 교체해야 의미가 있습니다.</li>'+
+   '<li>수치가 있는 정책 사실(진찰료 2%, 심층진찰 85,720원, 성과보상 5%, 원가보상률 190→150→110%, 위탁의뢰료 25% 등)은 원본 보고서에서 가져왔습니다. 시행 시기와 세부 요건은 심평원 고시 확정 후 확인해야 합니다.</li>'+
+   '<li>"3배 이상"은 기존 보고안(A) 대비 확장 실행안(B)의 설계 목표이며, 달성을 보장하는 수치가 아닙니다. 실제 달성 여부는 시뮬레이터에 실측값을 넣어 검증하세요.</li>'+
+   '<li>검사 수가 인하(CT·MRI 등)로 줄어드는 수익은 별도로 반영해야 합니다. 영상의학과·진단검사의학과 항목은 손실 방어 효과가 포함된 값입니다.</li>'+
+   '<li>일부 부서(수혈관리실, 영양팀, 전산, 재무, 총무, 홍보)는 직접 수가 항목이 없어 누락 방지와 비용 절감 효과 위주로 보수적으로 잡았습니다.</li>'+
+   '</ul></div></section>';
+  app.innerHTML=html;
+  buildNav();
+}
+function simRow(id,name,A,e){
+  return '<tr data-dept="'+id+'"><td class="ed" contenteditable="true">'+esc(name)+'</td>'+
+  '<td class="n num ed a" contenteditable="true">'+A+'</td>'+
+  '<td class="n num ed s1" contenteditable="true">'+e[0]+'</td>'+
+  '<td class="n num ed s2" contenteditable="true">'+e[1]+'</td>'+
+  '<td class="n num ed s3" contenteditable="true">'+e[2]+'</td>'+
+  '<td class="n b"></td><td class="n m"></td><td><button class="del" data-act="del-row" title="삭제">×</button></td></tr>';
+}
+function deptCard(d){
+  var h='<div class="card dept" id="d-'+d.id+'" data-dept="'+d.id+'"><header><h3 class="ed" contenteditable="true">'+esc(d.name)+'</h3><span class="tag ed" contenteditable="true">'+esc(d.tag)+'</span><span class="eff">기존안 <b class="ea">-</b> → 확장안 <b class="eb">-</b> (<b class="em">-</b>)</span></header>'+
+   '<div class="box basis"><b>정책 근거</b> · <span class="ed" contenteditable="true">'+esc(d.basis)+'</span></div><div class="cols">';
+  var cls=["--c:var(--s1);--cb:var(--s1b)","--c:var(--s2);--cb:var(--s2b)","--c:var(--s3);--cb:var(--s3b)"];
+  var nm=["1단계 · 0~3개월","2단계 · 3~9개월","3단계 · 9~18개월"];
+  for(var i=0;i<3;i++){
+    h+='<div class="col" style="'+cls[i]+'"><h4 class="ed" contenteditable="true">'+nm[i]+'</h4><ul>'+d.s[i].map(liHtml).join("")+'</ul><button class="add" data-act="add-li">+ 항목 추가</button></div>';
+  }
+  h+='</div><div class="kpi-line"><b>성과지표(KPI)</b> · <span class="ed" contenteditable="true">'+esc(d.kpi)+'</span></div></div>';
+  return h;
+}
+function buildNav(){
+  var n='<div class="grp">개요</div><a href="#overview">종합 요약</a><a href="#policy">정책 근거</a><a href="#roadmap">3단계 로드맵</a><a href="#sim">효과 시뮬레이터</a><div class="grp">부서별</div>';
+  D.forEach(function(d){n+='<a href="#d-'+d.id+'">'+d.name+'</a>'});
+  n+='<div class="grp">참고</div><a href="#notes">가정·유의사항</a>';
+  document.getElementById("nav").innerHTML=n;
+}
+
+/* ===== 계산 ===== */
+function calc(){
+  var goal=num(document.getElementById("goal"))||3;
+  var rows=app.querySelectorAll("#simT tbody tr");var T={a:0,s1:0,s2:0,s3:0,b:0};var map={};
+  rows.forEach(function(r){
+    var a=num(r.querySelector(".a")),s1=num(r.querySelector(".s1")),s2=num(r.querySelector(".s2")),s3=num(r.querySelector(".s3"));
+    var b=s1+s2+s3,m=a?b/a:0;
+    r.querySelector(".b").textContent=fmt(b);
+    var mc=r.querySelector(".m");mc.textContent=a?m.toFixed(1)+"배":"-";mc.className="n m "+(m>=goal?"ok":"bad");
+    T.a+=a;T.s1+=s1;T.s2+=s2;T.s3+=s3;T.b+=b;
+    map[r.getAttribute("data-dept")]={a:a,b:b,m:m};
+  });
+  var set=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t};
+  set("fA",fmt(T.a));set("f1",fmt(T.s1));set("f2",fmt(T.s2));set("f3",fmt(T.s3));set("fB",fmt(T.b));
+  var M=T.a?T.b/T.a:0;set("fM",M.toFixed(2)+"배");
+  set("tA",fmt(T.a));set("tB",fmt(T.b));set("tM",M.toFixed(2)+"배");
+  var tM=document.getElementById("tM");if(tM)tM.className="v "+(M>=goal?"ok":"bad");
+  set("tJ",M>=goal?"목표 "+goal+"배 이상 달성":"목표 "+goal+"배 미달");
+  app.querySelectorAll(".dept").forEach(function(c){
+    var x=map[c.getAttribute("data-dept")];
+    c.querySelector(".ea").textContent=x?fmt(x.a)+"백만원":"-";
+    c.querySelector(".eb").textContent=x?fmt(x.b)+"백만원":"-";
+    c.querySelector(".em").textContent=x&&x.a?x.m.toFixed(1)+"배":"-";
+  });
+}
+
+/* ===== 편집/저장 ===== */
+var timer;
+function autosave(){
+  clearTimeout(timer);
+  timer=setTimeout(function(){
+    try{app.setAttribute("data-ts",String(Date.now()));localStorage.setItem(LS_KEY,JSON.stringify({ts:Date.now(),html:app.innerHTML}))}catch(e){}
+  },500);
+}
+function setEditing(on){
+  document.body.classList.toggle("editing",on);
+  app.querySelectorAll(".ed").forEach(function(e){e.setAttribute("contenteditable",on?"true":"false")});
+  document.getElementById("btnLock").textContent=on?"편집 잠금":"편집 잠금 해제";
+}
+app.addEventListener("input",function(e){
+  if(e.target.classList&&(e.target.classList.contains("num")))calc();
+  autosave();
+});
+app.addEventListener("paste",function(e){
+  e.preventDefault();
+  var t=(e.clipboardData||window.clipboardData).getData("text/plain");
+  document.execCommand("insertText",false,t);
+});
+app.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("num")){e.preventDefault();e.target.blur()}
+});
+app.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var act=b.getAttribute("data-act");
+  if(act==="del-li"){b.closest("li").remove()}
+  else if(act==="del-row"){b.closest("tr").remove()}
+  else if(act==="add-li"){
+    var ul=b.parentNode.querySelector("ul");ul.insertAdjacentHTML("beforeend",liHtml("새 실행 항목 (담당·기한 포함)"));
+    var last=ul.lastElementChild.querySelector(".ed");last.focus();
+  }
+  else if(act==="add-sim"){
+    var id="x"+Date.now();
+    app.querySelector("#simT tbody").insertAdjacentHTML("beforeend",simRow(id,"새 부서",0,[0,0,0]));
+  }
+  calc();autosave();
+});
+document.getElementById("btnLock").onclick=function(){setEditing(!document.body.classList.contains("editing"))};
+document.getElementById("btnPrint").onclick=function(){window.print()};
+document.getElementById("btnReset").onclick=function(){
+  if(!confirm("저장된 수정 내용을 모두 지우고 원본으로 되돌릴까요?"))return;
+  try{localStorage.removeItem(LS_KEY)}catch(e){}
+  render();setEditing(true);calc();
+};
+document.getElementById("btnSave").onclick=function(){
+  var ts=Date.now();app.setAttribute("data-ts",String(ts));
+  var wasEditing=document.body.classList.contains("editing");
+  var html="<!doctype html>\n"+document.documentElement.outerHTML;
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([html],{type:"text/html;charset=utf-8"}));
+  var d=new Date();
+  a.download="부서별_수익증대_실행계획_수정본_"+d.getFullYear()+("0"+(d.getMonth()+1)).slice(-2)+("0"+d.getDate()).slice(-2)+".html";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+  autosave();
+};
+
+/* ===== 시작 ===== */
+var hasContent=app.children.length>0;           // 저장된 파일에서 열린 경우
+var saved=null;
+try{saved=JSON.parse(localStorage.getItem(LS_KEY)||"null")}catch(e){}
+if(!hasContent){
+  if(saved&&saved.html){app.innerHTML=saved.html;}else{render();}
+}else if(saved&&saved.html&&saved.ts>(parseInt(app.getAttribute("data-ts"),10)||0)){
+  app.innerHTML=saved.html;
+}
+if(!document.getElementById("nav").children.length)buildNav();
+setEditing(document.body.classList.contains("editing"));
+calc();
+})();
+</script>
+</body>
+</html>
